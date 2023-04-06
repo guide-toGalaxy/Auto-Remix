@@ -76,24 +76,7 @@ class BatchExtractor:
         self.extractors.append(extractor)
 
     def extract(self, dir):
-        """Extract features from all the audio files in the directory.
 
-        :param dir: (str) Path to directory with audio files to analyse
-
-        :return: (dict): Dictionary with audio file paths as keys and
-            extracted features in the form:
-            {
-                "filepath1": {
-                    "chromogram": np.ndarray([[], [], ...]),
-                    "mfcc": np.ndarray([[], [], ...])
-                },
-                "filepath2": {
-                    "chromogram": np.ndarray([[], [], ...]),
-                    "mfcc": np.ndarray([[], [], ...])
-                },
-                ...
-            }
-        """
         features = {}
         for root, _, files in os.walk(dir):
             for file in files:
@@ -187,46 +170,7 @@ class MultiTrackBatchAggregator:
         self.batch_aggregator = None
 
     def aggregate(self, tracks_features):
-        """Substitute features for each track with respective aggregations.
-
-        :param tracks_features: (dict) Tracks with corresponding features:
-            {
-                "filepath1": {
-                    "chromogram": np.ndarray([[], [], ...]),
-                    "mfcc": np.ndarray([[], [], ...])
-                },
-                "filepath2": {
-                    "chromogram": np.ndarray([[], [], ...]),
-                    "mfcc": np.ndarray([[], [], ...])
-                },
-                ...
-            }
-
-        :return: tracks_aggregations: (dict) Tracks with aggregated features
-            {
-                "filepath1": {
-                    "chromogram": {
-                        "mean": np.ndarray([[], [], ...]),
-                        "standard_deviation": np.ndarray([[], [], ...]),
-                    }
-                    "mfcc": {
-                        "mean": np.ndarray([[], [], ...]),
-                        "standard_deviation": np.ndarray([[], [], ...]),
-                    }
-                },
-                "filepath1": {
-                    "chromogram": {
-                        "mean": np.ndarray([[], [], ...]),
-                        "standard_deviation": np.ndarray([[], [], ...]),
-                    }
-                    "mfcc": {
-                        "mean": np.ndarray([[], [], ...]),
-                        "standard_deviation": np.ndarray([[], [], ...]),
-                    }
-                },
-                ...
-            }
-        """
+   
         tracks_aggregations = {}
         for track_path, track_features in tracks_features.items():
             features_aggregations = {}
