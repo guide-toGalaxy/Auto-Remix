@@ -3,17 +3,16 @@ import os
 import sys
 import librosa
 import numpy as np
+import pickle
+from sklearn.neighbors import NearestNeighbors
 
 class Extractor(ABC):
     """Interface for feature extractors."""
-
     def __init__(self, feature_name):
         self.feature_name = feature_name
-
     @abstractmethod
     def extract(self, signal, sample_rate):
         pass
-        
 class ChromogramExtractor(Extractor):
     """Concrete Extractor that extracts chromogram from signal."""
 
@@ -162,10 +161,6 @@ class MeanAggregator(Aggregator):
         return np.mean(array, axis=self.aggregation_axis)
 
 class MultiTrackBatchAggregator:
-    """MultiTrackBatchAggregator aggregates features which characterise a
-    set of tracks.
-    """
-
     def __init__(self):
         self.batch_aggregator = None
 
@@ -179,6 +174,33 @@ class MultiTrackBatchAggregator:
                 features_aggregations[feature_type] = aggregations
             tracks_aggregations[track_path] = features_aggregations
         return tracks_aggregations
+        
+def mapping_creation(agg):
+	return list(agg.keys())
+	
+def dataset_creation(agg):
+	dataset = list(agg.values())
+	dataset = np.asarray(dataset)
+	return dataset
+        
+def save_feat(save_path,data):
+	with open(save_path, "wb") as file:
+		pickle.dump(data, file)
+
+def concat_arr(feat):
+	features = [feature for feature in feat.values()]
+	new_features = np.hstack(features)
+	return new_features
+
+def getting_embeddings(features):
+	embeddings={}
+	for path,features in features.items():
+		new_arr=concat_arr(features)
+		embeddings[path]=new_arr
+	return embeddings
+		
+	
+	
 
 
 if __name__ == "__main__":
@@ -201,9 +223,28 @@ if __name__ == "__main__":
     mean_aggregator = MeanAggregator(1)
     batch_aggregator.add_aggregator(mean_aggregator)
     
+    
     mtba = MultiTrackBatchAggregator()
     mtba.batch_aggregator = batch_aggregator
     aggregated=mtba.aggregate(features)
+    
+    embeddings=getting_embeddings(aggregated)
+    
+    mappings=mapping_creation(embeddings)
+    dataset=dataset_creation(embeddings)
+    
+    save_feat(sys.argv[2],mappings)
+    save_feat(sys.argv[3],dataset)
+    
+    nearest_neighbour = NearestNeighbors()
+    nearest_neighbour.fit(dataset)
+    
+    distances,indices=nearest_neighbour.kneighbors(dataset)
+    print("DISTANCES",(distances),"INDICES",(indices))
+    
+    save_feat(sys.argv[4],nearest_neighbour)
+    
+    
 
     
-    print(aggregated)
+    #print(aggregated.values())

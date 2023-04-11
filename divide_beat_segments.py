@@ -20,7 +20,7 @@ def divide_to_beats(aud):
 	    beat_end = beat_start
 	    beat = y[start_sample:beat_end] 
 	    start_sample=beat_end
-	    output_file = os.path.join(output_dir, aud[:-4]+f'_beat{i+1}.wav')
+	    output_file = os.path.join(output_dir, aud[:-4]+f'_beat_{i+1}.wav')
 	    sf.write(output_file, beat, samplerate=sr,subtype="PCM_24")
 	# last_sample=y[start_sample:]
 	# sf.write(output_dir+aud[:-4]+f'_beat{len(beat_samples)+1}.wav', last_sample, samplerate=sr,subtype="PCM_24")
