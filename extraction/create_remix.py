@@ -104,11 +104,11 @@ print(surprisal_factor)
 threshold_values=np.zeros(no_of_samples_in_remix)
 random_no=np.zeros(no_of_samples_in_remix)
 
-with open('mapping1.pkl', 'rb') as f:
+with open('mapping.pkl', 'rb') as f:
 	mapping = pickle.load(f)
-with open('dataset1.pkl','rb') as f:
+with open('dataset.pkl','rb') as f:
 	features=pickle.load(f)
-with open('nn1.pkl','rb') as f:
+with open('nn.pkl','rb') as f:
 	NN=pickle.load(f)
 used=[]
 
